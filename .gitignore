@@ -1,0 +1,8 @@
+venv
+*.pyc
+*~
+#*#
+*.DS_Store
+*.AppleDouble
+*.ipa
+*.swp
