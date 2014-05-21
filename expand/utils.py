@@ -2,7 +2,7 @@ from expand.exceptions import ImproperExpandException
 
 def split_expands(expand):
     """
-        Convert ['a', 'a.b', 'a.d', 'c'] in the expand attribute
+        Convert ['a', 'a.b', 'a.d', 'c']
         into first_level_expands - ['a', 'c'] and
         next_level_expands {'a': ['b', 'd']}
     """
