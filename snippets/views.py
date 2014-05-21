@@ -25,23 +25,7 @@ from snippets.permissions import IsOwnerOrReadOnly
 from rest_framework import viewsets
 from rest_framework.decorators import link
 
-class ExpandModelMixin(object):
-    """
-        Apply this mixin to any view or viewset to dynamically generate the serializer_class
-        which has the expand parameter applied to the class
-    """
-
-    def get_serializer_class(self):
-        if 'expand' in self.request.QUERY_PARAMS:
-            expand = self.request.QUERY_PARAMS['expand']
-            print "expand QUERY_PARAMS", expand, "class name", self.serializer_class.__name__
-            return type('Foo', (self.serializer_class,), {'expand': expand})
-            #self.serializer_class.expand = expand
-        return self.serializer_class
-
-class ExpandModelViewSet(ExpandModelMixin, viewsets.ModelViewSet):
-    pass
-
+from expand.views import ExpandModelViewSet
 
 class SnippetViewSet(ExpandModelViewSet):
     """
@@ -80,15 +64,6 @@ class SnippetExtraViewSet(viewsets.ModelViewSet):
      def pre_save(self, obj):
         obj.user = self.request.user
 
-@api_view(('GET',))
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list', request=request, format=format),
-        'snippets': reverse('snippet-list', request=request, format=format),
-        'extras': reverse('snippetextra-list', request=request, format=format),
-    })
-
-
 class SnippetHighlight(generics.GenericAPIView):
     queryset = Snippet.objects.all()
     renderer_classes = (renderers.StaticHTMLRenderer,)
@@ -96,3 +71,11 @@ class SnippetHighlight(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         snippet = self.get_object()
         return Response(snippet.highlighted)
+
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'snippets': reverse('snippet-list', request=request, format=format),
+        'extras': reverse('snippetextra-list', request=request, format=format),
+    })
